@@ -1,1 +1,6 @@
+# top level config files
 config
+
+#pyc files
+*.pyc
+*.cfg
