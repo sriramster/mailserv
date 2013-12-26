@@ -1,0 +1,7 @@
+# Each mail polling server will have a different config group
+# The encryption field is only for password
+
+[serv_one]
+encrypted=yes
+pollinterval=300
+det = $proto $uname $pswd $server $port
