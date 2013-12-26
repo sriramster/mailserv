@@ -1,3 +1,7 @@
+# Implementing, a minimal imap server here with python imaplib. 
+# None of the search features will be implemeted here, the plan is to make search really quick [No pun intended]
+# Search will be handled locally, by some awesome [Pun Inteded] indexing and hashing technology
+
 import imaplib as imap
 import config
 
@@ -22,30 +26,35 @@ class ImapMailQueue():
         if self.con is None:
             print 'Failed to connect'
             return -1
-        self.get_all_mail()
+        # Get unseen messages map
+        self.get_mail(search='UNSEEN')
 
-    def get_mail_count(self):
+    def get_all_count(self, cond=None):
         count = self.con.select()
         self.count = count.__getitem__(1)
 
-    def get_all_mail(self):
+    def get_mail(self, search=None,cond=None):
         if self.con is None:
             print 'Unable to connect'
             return -1
         self.con.select()
-        stat, data = self.con.search(None,'ALL')
+        stat, data = self.con.search(None,search)
         if (stat != 'OK'):
             print 'Error'
             return -1
 
+        if cond is None:
+            cond = '(RFC822)'
+
         for i in data[0].split():
-            stat, data = self.con.fetch(i, '(RFC822)')
+            stat, data = self.con.fetch(i, cond)
             self.msg = data[0][1]
             if self.msg is None:
                 print 'Msg Has No Content'
                 return 0
             # do_parse_msg(self.msg)
             print 'Message %s\n%s\n' % (i, self.msg)
+        self.mailbox_logout()
 
     def get_mail_by_idx(self, idx):
         if idx is None:
