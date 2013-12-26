@@ -1,5 +1,5 @@
-import config
-import imap,pop3
+from scripts import config
+from scripts import imap,pop3
 
 class Application():
     """ The application Init happens here """

@@ -57,3 +57,11 @@ class ImapMailQueue():
             print 'Error'
             return -1
         self.msg = data[0][1]
+
+    def mailbox_logout(self):
+        if self.con is None:
+            print 'Logged out or Error'
+            return -1
+        self.con.close()
+        self.con.logout()
+        return 0
