@@ -1,10 +1,10 @@
 import logging
 from scripts import config
-from scripts import imap,pop3
+from scripts import imap,pop3,utils
 
 class Application():
     """ The application Init happens here """
-    logger = logging.getLogger("DaemonLog")
+    logger = logging.getLogger("MAILSERV")
     
     def __init__(self):
         self.logger.info('Application __init__')
@@ -24,21 +24,11 @@ class Application():
         serv = {}
 
         for i in section:
-            serv['encrypted'] = self.do_parse(data[i][0])
-            serv['pollinterval'] = self.do_parse(data[i][1])
-            det = self.do_parse(data[i][2])
-            q = det.split(' ')
-            serv['proto']  = q[0]
-            serv['uname']  = q[1]
-            serv['pswd']   = q[2]
-            serv['server'] = q[3]
-            serv['port']   = q[4]
+            serv = utils.create_config(data[i])
             
-            if (serv['proto'] == 'pop3'):
-                c = pop3.Pop3MailQueue(serv)
-            c = imap.ImapMailQueue(serv)
+        if (serv['proto'] == 'pop3'):
+            self.con = pop3.Pop3MailQueue(serv)
+        self.con = imap.ImapMailQueue(serv)
 
-    def do_parse(self,data):
-        if data is None:
-            return ''
-        return data.__getitem__(1)
+    def poll(self):
+        self.con.get_mail(search='UNSEEN')
