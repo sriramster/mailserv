@@ -1,5 +1,5 @@
 import logging,time
-from daemon import runner
+from lib.daemon import runner
 from scripts import pop3,imap,config,utils
 import app
 
@@ -20,6 +20,9 @@ class App():
             self.startApp()
             # This is timeout after which, the next wake up occurs
             time.sleep(200)
+
+    def stop(self):
+        logger.info('Stopping Daemon')
 
     def wakeup(self):
         self.app.poll()
