@@ -1,10 +1,13 @@
+import logging
 from scripts import config
 from scripts import imap,pop3
 
 class Application():
     """ The application Init happens here """
+    logger = logging.getLogger("DaemonLog")
     
     def __init__(self):
+        self.logger.info('Application __init__')
         c = config.ParseConfig()
         if c is None:
             return -1
@@ -39,5 +42,3 @@ class Application():
         if data is None:
             return ''
         return data.__getitem__(1)
-        
-q = Application()

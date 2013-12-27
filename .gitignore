@@ -4,3 +4,6 @@ config
 #pyc files
 *.pyc
 *.cfg
+
+#test files
+test/*
