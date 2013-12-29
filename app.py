@@ -10,25 +10,29 @@ class Application():
         self.logger.info('Application __init__')
         c = config.ParseConfig()
         if c is None:
-            return -1
-        data = c.data
+            return None
+        mdata = c.data
         section = c.section
         
         if data is None:
             print 'No Config Data Availabe' 
-            return -1
+            return None
         if section is None:
             print 'No Section data available'
-            return -1
+            return None
         
         serv = {}
 
         for i in section:
+            if (i == 'common'):
+                return
             serv = utils.create_config(data[i])
-            
+        
         if (serv['proto'] == 'pop3'):
             self.con = pop3.Pop3MailQueue(serv)
         self.con = imap.ImapMailQueue(serv)
 
     def poll(self):
         self.con.get_mail(search='UNSEEN')
+
+c = Application()

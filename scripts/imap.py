@@ -1,10 +1,11 @@
-# Implementing, a minimal imap server here with python imaplib. 
+# Implementing, a minimal imap server here with python imaplib.
 # None of the search features will be implemeted here, the plan is to make search really quick [No pun intended]
 # Search will be handled locally, by some awesome [Pun Inteded] indexing and hashing technology
 
 import imaplib as imap
 import config
 
+import email
 import smtplib as smtp
 from email.mime.text import MIMEText as mimef
 
@@ -67,7 +68,7 @@ class ImapMailQueue():
             # The big technology will come here
             file_name = '/home/sriram/src/python/mail_try/maildir/' + i
             c = open(file_name,'w')
-            q = mimef(self.msg)
+            q = email.message_from_string(self.msg)
             c.write(q.as_string())
             c.close()
         # self.mailbox_logout()

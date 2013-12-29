@@ -3,7 +3,7 @@
 import ConfigParser
 
 class ParseConfig():
-    """ Implements, m using microsoft config format. All GNU god's forgive me read config from file """
+    """ Implements, using microsoft config format. All GNU god's forgive """
     path = "/home/sriram/src/python/mail_try/conf/config"
     data = {}
     section = {}
