@@ -8,17 +8,13 @@ body {
   background-color: rgba(220, 220, 220, 0.8);
   background-repeat: no-repeat;
 
-  /* Disable tablet highlight */
-
-  /* Disable text selection as a default for whole body  */
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
   overflow:scroll;
 }
 
 .title {
     position:fixed;
+    height:40px;
+    line-height:40px;
     background-color: rgba(10, 10, 10, 0.8);
     color:white;
     width:100%;
@@ -36,23 +32,43 @@ body {
 
 .item {
     width:100%;
-    padding: 4px 2px 4px 2px;
-    border:1px solid black;
+    height:14px;
+    line-height:12px;
+    font-size:12px;
+    font-family: "Source Sans Pro";
+    font-weight:normal;
+    padding: 4px 4px 4px 4px;
+    border:1px solid rgba(10, 10, 10, 0.4);
+    border-radius:2px;
 }
 
-.from {
-    float:left;
-    padding:2px 2px 2px 2px;
+div.item:hover {
+    background-color: rgba(60, 80, 120, 0.8);
 }
-.to {
+
+
+.from {
+    width:33%;
     float:left;
-    padding:2px 2px 2px 2px;
+    padding: 4px 4px 4px 4px;
+    overflow:hidden;
 }
 .date {
+    width:30%;
     float:left;
-    padding:2px 2px 2px 2px;
+    padding: 4px 4px 4px 4px;
+    overflow:hidden;
 }
 .subject {
+    width:33%;
     float:left;
-    padding:2px 2px 2px 2px;
+    padding: 4px 4px 4px 4px;
+    overflow:hidden;
+}
+
+@font-face {
+  font-family: "Source Sans Pro";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Source Sans Pro"), local("SourceSansPro-Regular"), url("https://themes.googleusercontent.com/static/fonts/sourcesanspro/v7/ODelI1aHBYDBqgeIAH2zlBM0YzuT7MdOe03otPbuUS0.woff") format("woff");
 }

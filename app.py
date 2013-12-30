@@ -14,7 +14,7 @@ class Application():
         mdata = c.data
         section = c.section
         
-        if data is None:
+        if mdata is None:
             print 'No Config Data Availabe' 
             return None
         if section is None:
@@ -26,7 +26,7 @@ class Application():
         for i in section:
             if (i == 'common'):
                 return
-            serv = utils.create_config(data[i])
+            serv = utils.create_config(mdata[i])
         
         if (serv['proto'] == 'pop3'):
             self.con = pop3.Pop3MailQueue(serv)

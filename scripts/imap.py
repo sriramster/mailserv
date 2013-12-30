@@ -66,7 +66,7 @@ class ImapMailQueue():
                 return 0
             # do_parse_msg(self.msg)
             # The big technology will come here
-            file_name = '/home/sriram/src/python/mail_try/maildir/' + i
+            file_name = '/home/sriram/src/python/mail_try/maildir/' + i +'.mime'
             c = open(file_name,'w')
             q = email.message_from_string(self.msg)
             c.write(q.as_string())
