@@ -1,9 +1,12 @@
 # top level config files
-config
-
 #pyc files
 *.pyc
 *.cfg
 
 #test files
 test/*
+web/start
+maildir/*
+maildir_test/*
+scripts/run.py
+conf/config
