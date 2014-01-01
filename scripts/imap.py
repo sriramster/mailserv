@@ -12,23 +12,24 @@ from email.mime.text import MIMEText as mimef
 class ImapMailQueue():
     """ Implement's imap version of the mail retrival """
 
-    con = None
     count = 0
     msg = ''
+    conf = {}
 
     def __init__(self, conf=None):
         if conf is None:
             print 'No config Available'
             return None
-        
-        if self.con is None:
-            if conf['port'] == '993':
-                self.con = imap.IMAP4_SSL(conf['server'],conf['port'])
-            else:
-                self.con = imap.IMAP4(conf['server'],conf['port'])
+        self.conf = conf
 
-            self.con.login(conf['uname'],conf['pswd'])
-            if self.con is None:
+        if self.conf['con'] is None:
+            if self.conf['port'] == '993':
+                self.conf['con'] = imap.IMAP4_SSL(self.conf['server'],self.conf['port'])
+            else:
+                self.conf['con'] = imap.IMAP4(self.conf['server'],self.conf['port'])
+
+            self.conf['con'].login(self.conf['uname'],self.conf['pswd'])
+            if self.conf['con'] is None:
                 print 'Failed to connect'
                 return None
 
@@ -37,19 +38,19 @@ class ImapMailQueue():
             return 
 
     def get_all_count(self, cond=None):
-        count = self.con.select()
+        count = self.conf.con.select()
         self.count = count.__getitem__(1)
 
     def get_mail(self, select=None,search=None,cond=None):
-        if self.con is None:
+        if self.conf['con'] is None:
             print 'Unable to connect'
             return -1
             
         if select is None:
             select = 'INBOX'
 
-        self.con.select(select)
-        stat, data = self.con.search(None,search)
+        self.conf['con'].select(select)
+        stat, data = self.conf['con'].search(None,search)
         if (stat != 'OK'):
             print 'Error'
             return -1
@@ -59,17 +60,16 @@ class ImapMailQueue():
 
         # [::Cleanup::]
         for i in data[0].split():
-            stat, data = self.con.fetch(i, cond)
+            stat, data = self.conf['con'].fetch(i, cond)
             self.msg = data[0][1]
             if self.msg is None:
                 print 'Msg Has No Content'
                 return 0
             # do_parse_msg(self.msg)
             # The big technology will come here
-            file_name = '/home/sriram/src/python/mail_try/maildir/' + i +'.mime'
+            file_name = '/home/sriram/src/python/mail_try/maildir/'+ self.conf['mbox'] +'/' + i #+'.mime'
             c = open(file_name,'w')
-            q = email.message_from_string(self.msg)
-            c.write(q.as_string())
+            c.write(self.msg)
             c.close()
         # self.mailbox_logout()
 
@@ -77,25 +77,25 @@ class ImapMailQueue():
         if idx is None:
             print 'No Proper Idx specfied'
             return -1
-        self.con.select()
-        stat, data = self.con.fetch(idx, '(RFC822)')
+        self.conf['con'].select()
+        stat, data = self.conf['con'].fetch(idx, '(RFC822)')
         if (stat != 'OK'):
             print 'Error'
             return -1
         self.msg = data[0][1]
 
     def get_mailbox_list(self):
-        if self.con is None:
+        if self.conf['con'] is None:
             return -1
-        stat, data =  self.con.list()
+        stat, data =  self.conf['con'].list()
         if (stat != 'OK'):
             return -1
         print 'Data',data
 
     def mailbox_logout(self):
-        if self.con is None:
+        if self.conf['con'] is None:
             print 'Logged out or Error'
             return -1
-        self.con.close()
-        self.con.logout()
+        self.conf['con'].close()
+        self.conf['con'].logout()
         return 0

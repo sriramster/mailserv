@@ -27,10 +27,9 @@ class Application():
             if (i == 'common'):
                 return
             serv = utils.create_config(mdata[i])
-        
-        if (serv['proto'] == 'pop3'):
-            self.con = pop3.Pop3MailQueue(serv)
-        self.con = imap.ImapMailQueue(serv)
+            if (serv['proto'] == 'pop3'):
+                self.con = pop3.Pop3MailQueue(serv)
+            self.con = imap.ImapMailQueue(serv)
 
     def poll(self):
         self.con.get_mail(search='UNSEEN')

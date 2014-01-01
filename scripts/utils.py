@@ -11,6 +11,8 @@ def create_config(data):
     serv['pswd']   = q[2]
     serv['server'] = q[3]
     serv['port']   = q[4]
+    serv['mbox']   = q[5]
+    serv['con']    = None
     return serv
 
 def do_parse(data):
