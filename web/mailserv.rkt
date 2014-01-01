@@ -6,6 +6,25 @@
 	 web-server/templates
 	 net/mime)
 
+;; Config path, global declaration
+(define conf-path "/home/sriram/src/python/mail_try/conf/config")
+(define conf-list (list))
+
+(define (extract-path str)
+  (set! conf-list (cons (list-ref (string-split str " ") 7)
+	conf-list)))
+
+(define (dir-from-config)
+  (define data (string))
+  (define conf-data (list))
+  (set! conf-data (string-split (file->string conf-path) "\n"))
+  (map (lambda(i)
+	 (cond [(regexp-match #rx"^det" i) (extract-path i)]
+		[else (print "No")]
+		)) conf-data))
+
+(dir-from-config)
+
 (struct mail (from date subject))
 
 (define mlist (list))
@@ -14,8 +33,7 @@
   (mail 
    (cdr (assoc 'from list))
    (cdr (assoc 'date list))
-   (cdr (assoc 'sub list))
-   ))
+   (cdr (assoc 'sub list))))
 
 (define (extract s)
   (define slist (list))
@@ -24,8 +42,15 @@
 				 [(regexp-match #rx"^Date" i) (cons 'date i)]
 				 [(regexp-match #rx"^Subject" i) (cons 'sub i)]
 				 [else (print "No")])
-			   slist))) s)
-  slist)
+			   slist))) s) slist)
+
+(define (extract-msg-body in)
+  (define cnt-list (file->string in))
+  (map (lambda(i)
+	 (cond [(regexp-match #rx"[A-Za-za-zA-Z:]+" i) (print i)]
+	       [else (print i)]
+	       )
+	 )(string-split cnt-list "\r\n")))
 
 ;; [::CleanUp::]
 (define (process-dir path)
@@ -33,19 +58,20 @@
   (define listoffiles (directory-list path #:build? #t))
   (set! mlist (cons
 	       (map (lambda(i) 
-		      (set! l (extract (message-fields (mime-analyze (open-input-file i)))))
+		      (define in (open-input-file i))
+		      (set! l (extract (message-fields (mime-analyze in))))
 		      (set! l (filter (lambda(i) (cons? i)) l))
-		      ;; (print l)
-		      ;; (newline)
+		      ;; (extract-msg-body i)
 		      (create-mail-items l))
 		    listoffiles)
 	       mlist))
   (set! mlist (car mlist)))
 
-(process-dir "/home/sriram/src/python/mail_try/maildir/")
-
 (define (start request)
-  (include-template "template/welcome.html")
+  (map (lambda(i) 
+	 ;; Move process-each-dir somewhere else. [::NeedToThink::], And m sleepy
+	 (process-dir (string-append "/home/sriram/src/python/mail_try/maildir/" i))
+	 ) conf-list)
   (construct-stuffs request mlist))
 
 (define (beautify str typ)
@@ -56,8 +82,7 @@
 	     )
 	 str]
 	[(regexp-match #rx"sub" typ) 
-	 (define len (string-length str))
-	 (cond [(>= len 20) (set! str (string-append (string-trim (substring str 0 20)) "...."))]
+	 (cond [(>= (string-length str) 40) (set! str (string-append (string-trim (substring str 0 40)) "...."))]
 	       [else str])
 	 str]
 	[(regexp-match #rx"date" typ) 
@@ -83,14 +108,14 @@
 (define (construct-stuffs request mlist)
   (response/xexpr
    `(html 
-     (head (title "Inbox")
+     (head (title "maBox")
 	   (link ((rel "stylesheet")
 		  (href "/style.css")
 		  (type "text/css")
 		  )))
      (body (( class "body" ))
 	   (div ((class "title"))
-		"MailServ Inbox")
+		"PostBox")
 	   ,(construct-div mlist)))))
 
 ; Function called on server start
