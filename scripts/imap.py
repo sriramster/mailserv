@@ -15,12 +15,14 @@ class ImapMailQueue():
     count = 0
     msg = ''
     conf = {}
+    cconf = {}
 
-    def __init__(self, conf=None):
+    def __init__(self, conf=None, cconf=None):
         if conf is None:
             print 'No config Available'
             return None
         self.conf = conf
+        self.cconf = cconf
 
         if self.conf['con'] is None:
             if self.conf['port'] == '993':
@@ -41,6 +43,38 @@ class ImapMailQueue():
         count = self.conf.con.select()
         self.count = count.__getitem__(1)
 
+    def get_mail_by_date(self, select=None, search=None, cond=None):
+        if self.conf['con'] is None:
+            print 'Unable to connect'
+            return -1
+            
+        if select is None:
+            select = 'INBOX'
+
+        self.conf['con'].select(select)
+        stat, data = self.conf['con'].search(None,search)
+        if (stat != 'OK'):
+            print 'Error'
+            return -1
+
+        if cond is None:
+            cond = '(RFC822)'
+
+        # [::Cleanup::]
+        for i in data[0].split():
+            stat, data = self.conf['con'].sort('DATE ','UTF-8', cond)
+            self.msg = data[0][1]
+            if self.msg is None:
+                print 'Msg Has No Content'
+                return 0
+            # The big technology will come here
+            # file_name = '/home/sriram/src/mailserv/maildir/' + self.conf['mbox'] +'/' + i #+'.mime'
+            file_name = self.cconf['maildir'] + self.conf['mbox'] + i 
+            c = open(file_name,'w')
+            c.write(self.msg)
+            c.close()
+        # self.mailbox_logout()
+        
     def get_mail(self, select=None,search=None,cond=None):
         if self.conf['con'] is None:
             print 'Unable to connect'
@@ -67,7 +101,7 @@ class ImapMailQueue():
                 return 0
             # do_parse_msg(self.msg)
             # The big technology will come here
-            file_name = '/home/sriram/src/python/mail_try/maildir/'+ self.conf['mbox'] +'/' + i #+'.mime'
+            file_name = '/home/sriram/src/mailserv/maildir/'+ self.conf['mbox'] +'/' + i #+'.mime'
             c = open(file_name,'w')
             c.write(self.msg)
             c.close()

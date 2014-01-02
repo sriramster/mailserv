@@ -22,14 +22,22 @@ class Application():
             return None
         
         serv = {}
+        conndet = []
+        cconfig = {}
 
         for i in section:
             if (i == 'common'):
-                return
-            serv = utils.create_config(mdata[i])
-            if (serv['proto'] == 'pop3'):
-                self.con = pop3.Pop3MailQueue(serv)
-            self.con = imap.ImapMailQueue(serv)
+                cconfig = utils.create_cconfig(mdata[i])
+            else:
+                serv = utils.create_config(mdata[i])
+                conndet.append(serv)
+
+        # create connection for each server read
+        for i in range(len(conndet)):
+            __conn__ = conndet[i]
+            if (__conn__['proto'] == 'pop3'):
+                self.con = pop3.Pop3MailQueue(__conn__, cconfig)
+            self.con = imap.ImapMailQueue(__conn__, cconfig)
 
     def poll(self):
         self.con.get_mail(search='UNSEEN')

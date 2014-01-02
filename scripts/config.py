@@ -4,7 +4,7 @@ import ConfigParser
 
 class ParseConfig():
     """ Implements, using microsoft config format. All GNU god's forgive """
-    path = "/home/sriram/src/python/mail_try/conf/config"
+    path = "/home/sriram/src/mailserv/conf/config"
     data = {}
     section = {}
 
